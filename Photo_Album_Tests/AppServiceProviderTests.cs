@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using Photo_Album;
 
 namespace Photo_Album_Tests

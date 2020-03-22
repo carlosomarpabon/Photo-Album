@@ -1,8 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Photo_Album;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Photo_Album_Tests
 {
