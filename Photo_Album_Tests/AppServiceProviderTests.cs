@@ -38,5 +38,21 @@ namespace Photo_Album_Tests
 
             Assert.IsInstanceOfType(service, typeof(Logger<AlbumService>));
         }
+
+        [TestMethod]
+        public void Returns_Program()
+        {
+            var service = _appServiceProvider.GetService<IProgram>();
+
+            Assert.IsInstanceOfType(service, typeof(Program));
+        }
+
+        [TestMethod]
+        public void Returns_IConsoleInputService()
+        {
+            var service = _appServiceProvider.GetService<IConsoleService>();
+
+            Assert.IsInstanceOfType(service, typeof(ConsoleService));
+        }
     }
 }

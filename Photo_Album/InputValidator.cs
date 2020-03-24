@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using Photo_Album.Models;
 
 namespace Photo_Album
 {
@@ -24,11 +21,5 @@ namespace Photo_Album
             }
             return result;
         }
-    }   
-    public class InputValResult
-    {
-        public bool IsValid { get; set; }
-        public string Error { get; set; }
-        public int OutputNumber { get; set; }
     }
 }

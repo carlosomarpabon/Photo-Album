@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Photo_Album.Models;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -30,12 +31,12 @@ namespace Photo_Album
                 {
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
-                        string apiResponse = await response.Content.ReadAsStringAsync();
+                        var apiResponse = await response.Content.ReadAsStringAsync();
                         photos = JsonConvert.DeserializeObject<List<Photo>>(apiResponse);
                     }
                     else
                     {
-                        _logger.LogError($"Failed to connect to Album Service. ResponseStatusCode:{response.StatusCode}, ReasonPhrase:{response.ReasonPhrase}");
+                        _logger.LogError(string.Format(Constants.ERROR_FAILED_CONNECTION, response.StatusCode, response.ReasonPhrase));
                     }
                 }
             }

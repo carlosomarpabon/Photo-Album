@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Photo_Album;
+using Photo_Album.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -24,7 +25,7 @@ namespace Photo_Album_Tests
         public void GetPhotosByAlbumId_Returns_CorrectValues()
         {
             var task = Task.Run(async () => await _albumService.GetPhotosByAlbumId(VALID_ALBUM_ID));
-            List<Photo> result = task.Result;
+            var result = task.Result;
 
             Assert.IsTrue(result.Count == 50);
 
@@ -54,7 +55,7 @@ namespace Photo_Album_Tests
         public void GetPhotosByAlbumId_Returns_EmptyList_WhenNoneExistForId()
         {
             var task = Task.Run(async () => await _albumService.GetPhotosByAlbumId(INVALID_ALBUM_ID));
-            List<Photo> result = task.Result;
+            var result = task.Result;
 
             Assert.IsTrue(result.Count == 0);
         }

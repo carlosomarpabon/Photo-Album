@@ -3,32 +3,50 @@ using System.Threading.Tasks;
 
 namespace Photo_Album
 {
-    class Program
+    public interface IProgram
     {
-        static void Main(string[] args)
-        {
-            var serviceProvider = new AppServiceProvider();
-            var inputValidator = serviceProvider.GetService<IInputValidator>();
-            var albumService = serviceProvider.GetService<IAlbumService>();
+        void Run();
+    }
+    public class Program : IProgram
+    {
+        private readonly IInputValidator _inputValidator;
+        private readonly IAlbumService _albumService;
+        private readonly IConsoleService _consoleService;
 
-            Console.WriteLine("Welcome to Photo Album!");
-            while (true)
+        public Program(IInputValidator inputValidator, IAlbumService albumService, IConsoleService consoleService)
+        {
+            _inputValidator = inputValidator;
+            _albumService = albumService;
+            _consoleService = consoleService;
+        }
+
+        public void Run()
+        {
+            _consoleService.WriteLine(Constants.WELCOME);
+            var isDone = false;
+            while (!isDone)
             {
-                Console.WriteLine("Please enter the ID of the album you want:");
-                var input = Console.ReadLine();
-                var inputResult = inputValidator.IsInt(input);
+                _consoleService.WriteLine(Constants.ASK_FOR_ID);
+                var input = _consoleService.ReadLine();
+                var inputResult = _inputValidator.IsInt(input);
                 if (inputResult.IsValid)
                 {
-                    var task = Task.Run(async ()=> await albumService.GetPhotosByAlbumId(inputResult.OutputNumber));
+                    var task = Task.Run(async () => await _albumService.GetPhotosByAlbumId(inputResult.OutputNumber));
                     var photos = task.Result;
                     foreach (var p in photos)
                     {
-                        Console.WriteLine($"[{p.Id}] {p.Title}");
+                        _consoleService.WriteLine(string.Format(Constants.PHOTO_RECORD, p.Id, p.Title));
                     }
                 }
                 else
                 {
-                    Console.WriteLine(inputResult.Error);
+                    _consoleService.WriteLine(inputResult.Error);
+                }
+                _consoleService.WriteLine(Constants.ASK_IF_CONTINUE);
+                input = _consoleService.ReadLine();
+                if (input.ToUpper() == Constants.NO)
+                {
+                    isDone = true;
                 }
             }
         }

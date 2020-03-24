@@ -7,7 +7,8 @@ namespace Photo_Album_Tests
     public class InputValidatorTests
     {
         private InputValidator _inputValidator;
-
+        private const string NOT_INT_INPUT = "NOTINT";
+        private const int INT_INPUT = 123;
         [TestInitialize]
         public void Setup()
         {
@@ -17,7 +18,7 @@ namespace Photo_Album_Tests
         [TestMethod]
         public void Returns_InputResultWithError_When_NotInt()
         {
-            var input = "NOTINT";
+            var input = NOT_INT_INPUT;
             var result = _inputValidator.IsInt(input);
 
             Assert.IsFalse(result.IsValid);
@@ -27,12 +28,12 @@ namespace Photo_Album_Tests
         [TestMethod]
         public void Returns_InputResultWithIsValid_When_IsInt()
         {
-            var input = "123";
+            var input = INT_INPUT.ToString();
             var result = _inputValidator.IsInt(input);
 
             Assert.IsTrue(result.IsValid);
             Assert.IsNull(result.Error);
-            Assert.IsTrue(result.OutputNumber == 123);
+            Assert.IsTrue(result.OutputNumber == INT_INPUT);
         }
     }
 }
