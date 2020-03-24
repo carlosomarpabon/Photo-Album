@@ -18,6 +18,7 @@ namespace Photo_Album_Tests
         private Mock<IConsoleService> _mockConsoleService;
         private List<Photo> _validPhotos;
         private const string VALID_INPUT = "123";
+        private const string INVALID_INPUT = "INVALID";
         
         [TestInitialize]
         public void Setup()
@@ -29,6 +30,12 @@ namespace Photo_Album_Tests
                     IsValid = true,
                     Error = string.Empty,
                     OutputNumber = int.Parse(VALID_INPUT)
+                });
+            _mockInputValidator.Setup(x => x.IsInt(INVALID_INPUT))
+                .Returns(new InputValResult()
+                {
+                    IsValid = false,
+                    Error = Constants.ERROR_IS_NOT_NUMBER
                 });
             _validPhotos = GetValidPhotos();
             _mockAlbumService = new Mock<IAlbumService>();
@@ -49,12 +56,30 @@ namespace Photo_Album_Tests
 
             _program.Run();
 
+            _mockConsoleService.Verify(x => x.WriteLine(Constants.WELCOME));
+            _mockConsoleService.Verify(x => x.WriteLine(Constants.ASK_FOR_ID));
             _mockInputValidator.Verify(x => x.IsInt(VALID_INPUT));
             _mockAlbumService.Verify(x => x.GetPhotosByAlbumId(int.Parse(VALID_INPUT)));
             foreach (var p in _validPhotos)
             {
                 _mockConsoleService.Verify(x => x.WriteLine(string.Format(Constants.PHOTO_RECORD, p.Id, p.Title)));
             }
+            _mockConsoleService.Verify(x => x.WriteLine(Constants.ASK_IF_CONTINUE));
+        }
+
+        [TestMethod]
+        public void Run_PrintsError_When_NonIntInput()
+        {
+            _mockConsoleService.SetupSequence(x => x.ReadLine())
+                .Returns(INVALID_INPUT)
+                .Returns(Constants.NO);
+
+            _program.Run();
+
+            _mockConsoleService.Verify(x => x.WriteLine(Constants.WELCOME));
+            _mockConsoleService.Verify(x => x.WriteLine(Constants.ASK_FOR_ID));
+            _mockInputValidator.Verify(x => x.IsInt(INVALID_INPUT));
+            _mockConsoleService.Verify(x => x.WriteLine(Constants.ERROR_IS_NOT_NUMBER));
             _mockConsoleService.Verify(x => x.WriteLine(Constants.ASK_IF_CONTINUE));
         }
 
