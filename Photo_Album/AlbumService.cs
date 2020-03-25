@@ -15,29 +15,29 @@ namespace Photo_Album
     public class AlbumService : IAlbumService
     {
         private readonly ILogger<AlbumService> _logger;
+        private readonly HttpClient _httpClient;
 
-        public AlbumService(ILogger<AlbumService> logger)
+        public AlbumService(ILogger<AlbumService> logger, HttpClient httpClient)
         {
             _logger = logger;
+            _httpClient = httpClient;
         }
 
         public async Task<List<Photo>> GetPhotosByAlbumId(int albumId)
         {
             var photos = new List<Photo>();
             var query = $"{Constants.PHOTOS_URL}{Constants.QUERY_BY_ALBUM_ID_SUFFIX}{albumId}";
-            using (var httpClient = new HttpClient())
+
+            using (var response = await _httpClient.GetAsync(query))
             {
-                using (var response = await httpClient.GetAsync(query))
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        var apiResponse = await response.Content.ReadAsStringAsync();
-                        photos = JsonConvert.DeserializeObject<List<Photo>>(apiResponse);
-                    }
-                    else
-                    {
-                        _logger.LogError(string.Format(Constants.ERROR_FAILED_CONNECTION, response.StatusCode, response.ReasonPhrase));
-                    }
+                    var apiResponse = await response.Content.ReadAsStringAsync();
+                    photos = JsonConvert.DeserializeObject<List<Photo>>(apiResponse);
+                }
+                else
+                {
+                    _logger.LogError(string.Format(Constants.ERROR_FAILED_CONNECTION, response.StatusCode, response.ReasonPhrase));
                 }
             }
             return photos;

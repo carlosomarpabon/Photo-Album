@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
 
 namespace Photo_Album
 {
@@ -8,13 +9,16 @@ namespace Photo_Album
         private readonly ServiceProvider _serviceProvider;
         public AppServiceProvider()
         {
-            _serviceProvider = new ServiceCollection()
-                .AddLogging(c =>c.AddConsole())
+            var serviceCollection = new ServiceCollection()
+                .AddLogging(c => c.AddConsole())
                 .AddSingleton<IAlbumService, AlbumService>()
                 .AddSingleton<IInputValidator, InputValidator>()
                 .AddSingleton<IConsoleService, ConsoleService>()
-                .AddSingleton<IProgram, Program>()
-                .BuildServiceProvider();
+                .AddSingleton<IProgram, Program>();
+            serviceCollection
+                .AddHttpClient<IAlbumService, AlbumService>();
+
+            _serviceProvider = serviceCollection.BuildServiceProvider();
         }
 
         public T GetService<T>()
